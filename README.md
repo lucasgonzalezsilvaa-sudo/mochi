@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Los Viajes de Mochi
 
-## Getting Started
+Landing + blog para Mochi, viajera que organiza viajes en grupos reducidos por
+Sudamérica. Rediseño de [mochiviaja.com](https://mochiviaja.com) con panel de
+administración para publicar notas (posts) y posicionarse en Google.
 
-First, run the development server:
+Hecho con **Next.js 16 + Tailwind CSS 4**. Las notas se guardan como archivos
+Markdown en el repo (sin base de datos), así cada nota es una página estática que
+Google indexa.
+
+## Correr en local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Sitio: http://localhost:3000
+- Panel admin: http://localhost:3000/admin
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Entrar al panel (login)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+El panel `/admin` está protegido con contraseña (cookie de sesión, funciona también
+en Vercel).
 
-## Learn More
+- **Contraseña por defecto:** `mochi2026`
+- Se cambia en [`src/lib/auth.ts`](src/lib/auth.ts) o con la variable de entorno
+  `ADMIN_PASSWORD` en Vercel.
+- Al entrar a `/admin` sin sesión, redirige a `/admin/login`. Hay botón de
+  "Cerrar sesión" dentro del panel.
 
-To learn more about Next.js, take a look at the following resources:
+## Escribir notas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Entrá a `/admin` en tu computadora e iniciá sesión.
+2. Completá título, resumen, portada y contenido (en Markdown) y publicá.
+3. Cada nota se guarda como un archivo en `content/notas/`.
+4. Para que aparezca online, subí los cambios a Git → Vercel republica solo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> El panel escribe archivos en tu disco, por eso funciona **en local**. En Vercel
+> el sistema de archivos es de solo lectura: el flujo es escribir local → push →
+> deploy. Es lo ideal para SEO, porque genera páginas estáticas.
 
-## Deploy on Vercel
+También podés crear/editar notas a mano en `content/notas/*.md`. Formato:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```markdown
+---
+title: Título de la nota
+excerpt: Frase corta para tarjetas y Google
+date: "2026-07-10"
+cover: /images/hero-atacama.jpg
+tags: [uruguay, consejos]
+author: Mochi
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Cuerpo en **Markdown**...
+```
+
+## Estructura
+
+```
+content/notas/        Notas en Markdown (el "CMS")
+public/images/        Imágenes del sitio original, reutilizadas
+src/app/(site)/       Landing + blog (con Header/Footer)
+src/app/admin/        Panel de administración
+src/app/api/notas/    API que guarda/borra notas en disco
+src/lib/site.ts       Datos de marca, redes y viajes
+src/lib/notas.ts      Lectura/escritura de notas
+```
+
+## Editar los viajes y datos de contacto
+
+Los tres viajes destacados y los datos de contacto (WhatsApp, Instagram, mail)
+están en [`src/lib/site.ts`](src/lib/site.ts).
+
+## Desplegar en Vercel
+
+1. Subí el proyecto a un repo de GitHub (`git init`, commit y push).
+2. Importalo en [vercel.com](https://vercel.com) — detecta Next.js automáticamente.
+3. (Opcional) Definí la variable de entorno `ADMIN_KEY` para proteger la API si
+   alguna vez habilitás escritura remota.
+
+## Diseño
+
+Animaciones basadas en la filosofía de Emil Kowalski (skills instaladas):
+curvas de easing fuertes (`cubic-bezier(0.23, 1, 0.32, 1)`), solo `transform` +
+`opacity`, feedback al presionar botones, y respeto por `prefers-reduced-motion`.

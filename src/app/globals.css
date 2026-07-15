@@ -1,26 +1,213 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Los Viajes de Mochi — Design System
+   Paleta cálida de viaje: arena, tinta profunda, terracota, océano.
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base */
+  --sand: #f6f1e7;
+  --sand-2: #efe7d6;
+  --cream: #fffdf8;
+  --ink: #211d18;
+  --ink-soft: #4a443b;
+  --muted: #8c8375;
+  --line: #e4dccb;
+
+  /* Acentos */
+  --terra: #c65f36; /* terracota — CTA / acento principal */
+  --terra-deep: #a84c28;
+  --ocean: #2e6b6f; /* océano — acento secundario */
+  --sun: #e0a04a;
+
+  /* Semántica */
+  --background: var(--sand);
+  --foreground: var(--ink);
+
+  /* Curvas de easing (Emil Kowalski) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-sand: var(--sand);
+  --color-sand-2: var(--sand-2);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-terra: var(--terra);
+  --color-terra-deep: var(--terra-deep);
+  --color-ocean: var(--ocean);
+  --color-sun: var(--sun);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-fraunces);
+
+  --ease-out: var(--ease-out);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--terra);
+  color: #fff;
+}
+
+/* Scroll suave para anclas del nav */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+/* ---------- Reveal on scroll ----------
+   Entrada = ease-out (arranca rápido, se siente responsivo).
+   Solo transform + opacity. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 640ms var(--ease-out),
+    transform 640ms var(--ease-out);
+  will-change: transform, opacity;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Botones con feedback al presionar ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition:
+    transform 140ms var(--ease-out),
+    background-color 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Kicker / etiqueta pequeña */
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* Zoom sutil de imágenes en hover de tarjetas */
+.card-media img {
+  transition: transform 600ms var(--ease-out);
+}
+.group:hover .card-media img {
+  transform: scale(1.05);
+}
+
+/* ---------- Prosa (render de notas Markdown) ---------- */
+.prose {
+  color: var(--ink-soft);
+  font-size: 1.075rem;
+  line-height: 1.8;
+}
+.prose > * + * {
+  margin-top: 1.25rem;
+}
+.prose h2 {
+  font-family: var(--font-serif), serif;
+  color: var(--ink);
+  font-size: 1.9rem;
+  line-height: 1.2;
+  margin-top: 2.75rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
+}
+.prose h3 {
+  font-family: var(--font-serif), serif;
+  color: var(--ink);
+  font-size: 1.4rem;
+  margin-top: 2rem;
+}
+.prose p {
+  color: var(--ink-soft);
+}
+.prose a {
+  color: var(--terra-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose a:hover {
+  color: var(--terra);
+}
+.prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.4rem;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li::marker {
+  color: var(--terra);
+}
+.prose li + li {
+  margin-top: 0.5rem;
+}
+.prose blockquote {
+  border-left: 3px solid var(--terra);
+  padding-left: 1.25rem;
+  font-family: var(--font-serif), serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--ink);
+}
+.prose img {
+  border-radius: 1rem;
+  width: 100%;
+}
+.prose code {
+  background: var(--sand-2);
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  font-size: 0.9em;
+}
+
+/* Respeto por quienes reducen movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
