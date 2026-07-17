@@ -16,7 +16,7 @@ export default function Footer() {
           <p className="kicker text-muted">Explorar</p>
           <ul className="mt-4 space-y-2 text-sm text-ink-soft">
             <li>
-              <Link href="/#viajes" className="hover:text-terra">
+              <Link href="/viajes" className="hover:text-terra">
                 Próximos viajes
               </Link>
             </li>
