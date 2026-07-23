@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getAllNotas, getNota, getSlugs } from "@/lib/notas";
 import { site } from "@/lib/site";
+import { getTour } from "@/lib/viajes";
 import NoteCard from "@/components/NoteCard";
 
 export const dynamicParams = false;
@@ -58,6 +59,8 @@ export default async function NotaPage({
   const otras = getAllNotas()
     .filter((n) => n.slug !== nota.slug)
     .slice(0, 3);
+
+  const relatedTour = nota.tourSlug ? getTour(nota.tourSlug) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -130,18 +133,35 @@ export default async function NotaPage({
       {/* CTA */}
       <div className="mx-auto mt-16 max-w-2xl px-5 sm:px-8">
         <div className="rounded-2xl border border-line bg-sand-2/60 p-8 text-center">
-          <p className="font-serif text-2xl text-ink">¿Te dieron ganas de viajar?</p>
-          <p className="mt-2 text-ink-soft">
-            Contame a dónde y armamos tu próximo viaje.
-          </p>
-          <a
-            href={site.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn mt-5 bg-terra px-6 py-3 text-white hover:bg-terra-deep"
-          >
-            Escribime por WhatsApp
-          </a>
+          {relatedTour ? (
+            <>
+              <p className="font-serif text-2xl text-ink">¿Te dieron ganas de viajar?</p>
+              <p className="mt-2 text-ink-soft">
+                Este viaje te puede interesar: {relatedTour.name}.
+              </p>
+              <Link
+                href={`/viajes/${relatedTour.slug}`}
+                className="btn mt-5 bg-terra px-6 py-3 text-white hover:bg-terra-deep"
+              >
+                Ver viaje: {relatedTour.name}
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="font-serif text-2xl text-ink">¿Te dieron ganas de viajar?</p>
+              <p className="mt-2 text-ink-soft">
+                Contame a dónde y armamos tu próximo viaje.
+              </p>
+              <a
+                href={site.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn mt-5 bg-terra px-6 py-3 text-white hover:bg-terra-deep"
+              >
+                Escribime por WhatsApp
+              </a>
+            </>
+          )}
         </div>
       </div>
 

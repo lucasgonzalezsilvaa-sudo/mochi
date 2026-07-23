@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Tour } from "@/lib/site";
+import type { Tour } from "@/lib/viajes";
+import OfferCountdown from "@/components/OfferCountdown";
 
 const accentBg = {
   terra: "bg-terra",
@@ -35,13 +36,37 @@ export default function TourCard({ tour }: { tour: Tour }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="flex-1 text-sm leading-relaxed text-ink-soft">{tour.blurb}</p>
-        <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-terra">
+
+        {tour.price && (
+          <div className="mt-4 flex items-baseline gap-2">
+            {tour.priceBefore && (
+              <span className="text-base text-muted line-through">{tour.priceBefore}</span>
+            )}
+            <span className="text-xl font-semibold text-terra-deep">{tour.price}</span>
+          </div>
+        )}
+
+        {tour.offerEndsAt && (
+          <OfferCountdown
+            endsAt={tour.offerEndsAt}
+            textSize="text-sm"
+            className="mt-1.5 text-terra-deep"
+          />
+        )}
+
+        <span className="btn mt-5 w-full bg-terra px-5 py-2.5 text-sm text-white transition-colors duration-200 group-hover:bg-terra-deep">
           Ver el viaje
           <span className="transition-transform duration-200 group-hover:translate-x-1">
             →
           </span>
         </span>
       </div>
+
+      {tour.offerLabel && (
+        <div className="bg-terra-deep px-5 py-2.5 text-center text-xs font-semibold text-white">
+          {tour.offerLabel}
+        </div>
+      )}
     </Link>
   );
 }

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllNotas } from "@/lib/notas";
-import { site, tours } from "@/lib/site";
+import { getAllTours } from "@/lib/viajes";
+import { site } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const notas = getAllNotas().map((n) => ({
@@ -10,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const viajes = tours.map((t) => ({
+  const viajes = getAllTours().map((t) => ({
     url: `${site.url}/viajes/${t.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,

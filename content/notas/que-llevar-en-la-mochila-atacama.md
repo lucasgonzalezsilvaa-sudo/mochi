@@ -1,14 +1,16 @@
 ---
 title: Qué llevar en la mochila para el desierto de Atacama
-excerpt: El desierto más árido del mundo tiene sus reglas. Esta es mi lista
-  probada para no pasar frío de noche ni calor de día.
-date: "2026-07-05"
+excerpt: >-
+  El desierto más árido del mundo tiene sus reglas. Esta es mi lista probada
+  para no pasar frío de noche ni calor de día.
+date: '2026-07-05'
 cover: /images/hero-atacama.jpg
 tags:
   - atacama
   - equipaje
   - chile
 author: Mochi
+tourSlug: atacama-infinito
 ---
 
 Atacama engaña. De día el sol pega fuerte y de noche la temperatura se desploma. Después de varios viajes, esta es la lista que nunca falla.

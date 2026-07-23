@@ -1,13 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AUTH_COOKIE, AUTH_TOKEN } from "@/lib/auth";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const authed = req.cookies.get(AUTH_COOKIE)?.value === AUTH_TOKEN;
   const { pathname } = req.nextUrl;
 
-  // API de notas: leer es público, escribir/borrar exige sesión.
-  if (pathname.startsWith("/api/notas")) {
+  // API de notas y viajes: leer es público, escribir/borrar exige sesión.
+  if (pathname.startsWith("/api/notas") || pathname.startsWith("/api/viajes")) {
     if (req.method === "GET" || authed) return NextResponse.next();
+    return NextResponse.json({ error: "Sesión requerida" }, { status: 401 });
+  }
+
+  // Subida de imágenes: siempre exige sesión.
+  if (pathname.startsWith("/api/upload")) {
+    if (authed) return NextResponse.next();
     return NextResponse.json({ error: "Sesión requerida" }, { status: 401 });
   }
 
@@ -26,5 +32,12 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/notas", "/api/notas/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/notas",
+    "/api/notas/:path*",
+    "/api/viajes",
+    "/api/viajes/:path*",
+    "/api/upload",
+  ],
 };

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
 import TourCard from "@/components/TourCard";
-import { tours } from "@/lib/site";
+import { getAllTours } from "@/lib/viajes";
 
 export const metadata: Metadata = {
   title: "Próximos viajes",
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function ViajesPage() {
+  const tours = getAllTours();
   return (
     <div className="pt-16">
       <section className="border-b border-line bg-sand-2/50">

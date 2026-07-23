@@ -1,0 +1,43 @@
+{
+  "slug": "patagonia-salvaje",
+  "name": "Patagonia Salvaje",
+  "place": "Puerto Madryn · Argentina",
+  "dates": "20 – 26 oct 2026",
+  "duration": "7 días / 6 noches",
+  "image": "/images/patagonia.jpg",
+  "blurb": "Avistaje de ballenas, costa infinita y la fauna más increíble del Atlántico Sur.",
+  "intro": [
+    "La Patagonia atlántica es pura vida salvaje: ballenas francas que se acercan a la costa, pingüinos, lobos marinos y una inmensidad que te reordena por dentro.",
+    "Un viaje para desconectar de todo y volver a conectar con lo esencial, en la mejor época para ver ballenas."
+  ],
+  "highlights": [
+    "Avistaje de ballenas francas",
+    "Península Valdés y su fauna",
+    "Colonias de pingüinos y lobos marinos",
+    "Costa y estepa patagónica",
+    "Atardeceres infinitos"
+  ],
+  "includes": [
+    "Alojamiento 6 noches",
+    "Traslados y excursiones",
+    "Salida de avistaje de ballenas",
+    "Acompañamiento de Mochi y grupo reducido"
+  ],
+  "accent": "sun",
+  "price": "USD 890",
+  "priceBefore": "USD 1.050",
+  "offerEndsAt": "2026-08-31T23:59:00",
+  "offerLabel": "Precio especial por reserva anticipada",
+  "reviews": [
+    {
+      "photo": "/images/about-mochi.jpg",
+      "name": "Julián P.",
+      "opinion": "Ver las ballenas tan cerca de la costa fue increíble. Mochi se encargó de todo, viaje redondo."
+    },
+    {
+      "photo": "/images/vertical-1.jpg",
+      "name": "Sofía M.",
+      "opinion": "Grupo chico y buena onda todo el viaje. Volvería a repetirlo sin dudarlo."
+    }
+  ]
+}

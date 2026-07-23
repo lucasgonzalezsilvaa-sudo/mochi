@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { tours, getTour, site } from "@/lib/site";
+import { site } from "@/lib/site";
+import { getAllTours, getTour } from "@/lib/viajes";
 import TourCard from "@/components/TourCard";
+import OfferCountdown from "@/components/OfferCountdown";
+import ReviewCard from "@/components/ReviewCard";
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return tours.map((t) => ({ slug: t.slug }));
+  return getAllTours().map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({
@@ -40,7 +43,7 @@ export default async function ViajePage({
   const tour = getTour(slug);
   if (!tour) notFound();
 
-  const otros = tours.filter((t) => t.slug !== tour.slug);
+  const otros = getAllTours().filter((t) => t.slug !== tour.slug);
 
   const waText = encodeURIComponent(
     `¡Hola Mochi! Me interesa el viaje "${tour.name}" (${tour.dates}). ¿Me contás más?`,
@@ -131,7 +134,25 @@ export default async function ViajePage({
           {/* Barra lateral */}
           <aside className="md:sticky md:top-24 md:self-start">
             <div className="rounded-2xl border border-line bg-cream p-6">
-              <p className="kicker text-terra">Incluye</p>
+              {tour.price && (
+                <div className="flex items-baseline gap-2">
+                  {tour.priceBefore && (
+                    <span className="text-base text-muted line-through">
+                      {tour.priceBefore}
+                    </span>
+                  )}
+                  <span className="font-serif text-2xl text-terra-deep">{tour.price}</span>
+                </div>
+              )}
+              {tour.offerEndsAt && (
+                <OfferCountdown
+                  endsAt={tour.offerEndsAt}
+                  textSize="text-sm"
+                  className="mt-1.5 text-terra-deep"
+                />
+              )}
+
+              <p className="kicker mt-5 text-terra">Incluye</p>
               <ul className="mt-4 space-y-2.5 text-sm text-ink-soft">
                 {tour.includes.map((inc) => (
                   <li key={inc} className="flex gap-2">
@@ -152,9 +173,28 @@ export default async function ViajePage({
                 Cupos limitados · grupo reducido
               </p>
             </div>
+            {tour.offerLabel && (
+              <div className="mt-3 rounded-xl bg-terra-deep px-4 py-2.5 text-center text-xs font-semibold text-white">
+                {tour.offerLabel}
+              </div>
+            )}
           </aside>
         </div>
       </div>
+
+      {/* Reseñas del viaje */}
+      {tour.reviews.length > 0 && (
+        <section className="bg-sand-2/50">
+          <div className="mx-auto max-w-4xl px-5 py-16 sm:px-8">
+            <h2 className="font-serif text-2xl text-ink">Lo que dicen quienes viajaron</h2>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              {tour.reviews.map((r, i) => (
+                <ReviewCard key={i} review={r} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Otros viajes */}
       {otros.length > 0 && (

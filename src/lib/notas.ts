@@ -12,6 +12,7 @@ export type Nota = {
   cover: string;
   tags: string[];
   author: string;
+  tourSlug?: string; // slug del viaje relacionado (opcional)
   content: string; // cuerpo Markdown
 };
 
@@ -42,6 +43,7 @@ export function getNota(slug: string): Nota | null {
     cover: data.cover ?? "/images/hero-atacama.jpg",
     tags: Array.isArray(data.tags) ? data.tags : [],
     author: data.author ?? "Mochi",
+    tourSlug: data.tourSlug || undefined,
     content,
   };
 }
@@ -75,6 +77,7 @@ export function saveNota(input: {
   cover: string;
   tags: string[];
   author: string;
+  tourSlug?: string;
   content: string;
 }): void {
   ensureDir();
@@ -85,6 +88,7 @@ export function saveNota(input: {
     cover: input.cover,
     tags: input.tags,
     author: input.author,
+    ...(input.tourSlug ? { tourSlug: input.tourSlug } : {}),
   });
   fs.writeFileSync(path.join(NOTAS_DIR, `${input.slug}.md`), fileData, "utf-8");
 }

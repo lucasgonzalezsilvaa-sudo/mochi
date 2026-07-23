@@ -3,11 +3,16 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import NoteCard from "@/components/NoteCard";
 import TourCard from "@/components/TourCard";
-import { site, tours } from "@/lib/site";
+import CoordinatorCard from "@/components/CoordinatorCard";
+import ReviewCard from "@/components/ReviewCard";
+import { site, coordinators } from "@/lib/site";
+import { getAllTours, getAllReviews } from "@/lib/viajes";
 import { getAllNotas } from "@/lib/notas";
 
 export default function Home() {
   const notas = getAllNotas().slice(0, 3);
+  const tours = getAllTours();
+  const reviews = getAllReviews();
 
   return (
     <>
@@ -147,6 +152,55 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* ============== COORDINADORES ============== */}
+      {coordinators.length > 0 && (
+        <section id="coordinadores" className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+          <Reveal>
+            <p className="kicker text-terra">Quiénes te acompañan</p>
+            <h2 className="mt-3 max-w-2xl font-serif text-3xl text-ink sm:text-5xl">
+              Coordinadores de viaje
+            </h2>
+            <p className="mt-4 max-w-xl text-ink-soft">
+              Cada grupo viaja acompañado de punta a punta, para que solo tengas que
+              disfrutar.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid gap-7 sm:grid-cols-2 md:grid-cols-3">
+            {coordinators.map((c, i) => (
+              <Reveal key={c.name} delay={i * 90}>
+                <CoordinatorCard coordinator={c} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ============== RESEÑAS ============== */}
+      {reviews.length > 0 && (
+        <section className="bg-sand-2/50">
+          <div className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+            <Reveal>
+              <p className="kicker text-terra">Lo que dicen</p>
+              <h2 className="mt-3 max-w-2xl font-serif text-3xl text-ink sm:text-5xl">
+                Reseñas de viajeros
+              </h2>
+              <p className="mt-4 max-w-xl text-ink-soft">
+                Historias de quienes ya viajaron con Mochi.
+              </p>
+            </Reveal>
+
+            <div className="mt-12 grid gap-7 sm:grid-cols-2 md:grid-cols-3">
+              {reviews.map((r, i) => (
+                <Reveal key={`${r.tourSlug}-${i}`} delay={i * 90}>
+                  <ReviewCard review={r} tourName={r.tourName} tourSlug={r.tourSlug} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ============== NOTAS ============== */}
       {notas.length > 0 && (

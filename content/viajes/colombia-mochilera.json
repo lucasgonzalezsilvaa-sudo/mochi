@@ -1,0 +1,29 @@
+{
+  "slug": "colombia-mochilera",
+  "name": "Colombia Mochilera",
+  "place": "Santa Marta · Minca · Palomino",
+  "dates": "20 – 30 ene 2027",
+  "duration": "11 días / 10 noches",
+  "image": "/images/colombia.jpg",
+  "blurb": "Caribe, sierra y selva. Del mar turquesa a los pueblos de montaña, viviendo Colombia sin apuro.",
+  "intro": [
+    "Colombia se vive con todos los sentidos: el calor del Caribe, la sierra verde de Minca, los ríos de Palomino y una energía que te contagia desde el primer día.",
+    "Un viaje mochilero de verdad, pero con todo resuelto: vos ponés las ganas y la mochila, del resto me ocupo yo."
+  ],
+  "highlights": [
+    "Playas del Caribe en Santa Marta",
+    "Minca: cascadas, café y sierra",
+    "Tubing por el río de Palomino",
+    "Atardeceres y música en la costa",
+    "Comida local y mercados"
+  ],
+  "includes": [
+    "Alojamiento 10 noches",
+    "Traslados entre destinos",
+    "Experiencias del itinerario",
+    "Acompañamiento de Mochi y grupo reducido"
+  ],
+  "accent": "ocean",
+  "price": "USD 1.350",
+  "reviews": []
+}

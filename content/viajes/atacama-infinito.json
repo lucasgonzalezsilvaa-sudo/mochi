@@ -1,0 +1,38 @@
+{
+  "slug": "atacama-infinito",
+  "name": "Atacama Infinito",
+  "place": "San Pedro de Atacama · Chile",
+  "dates": "11 – 17 nov 2026",
+  "duration": "7 días / 6 noches",
+  "image": "/images/hero-atacama.jpg",
+  "blurb": "El desierto más árido del mundo, sus lagunas altiplánicas y los cielos más estrellados del planeta.",
+  "intro": [
+    "Atacama es un lugar que no se parece a nada. Salares infinitos, lagunas de color imposible, géiseres al amanecer y noches con más estrellas de las que creías que existían.",
+    "Vamos a recorrerlo sin apuro, en grupo chico, dejando tiempo para el silencio y para esas charlas que solo aparecen mirando el cielo del desierto."
+  ],
+  "highlights": [
+    "Valle de la Luna al atardecer",
+    "Géiseres del Tatio al amanecer",
+    "Lagunas altiplánicas y salar de Atacama",
+    "Noche de observación astronómica",
+    "Pueblos y ferias de San Pedro"
+  ],
+  "includes": [
+    "Alojamiento 6 noches",
+    "Traslados y excursiones del itinerario",
+    "Acompañamiento de Mochi durante todo el viaje",
+    "Grupo reducido"
+  ],
+  "accent": "terra",
+  "price": "USD 950",
+  "priceBefore": "",
+  "offerEndsAt": "",
+  "offerLabel": "",
+  "reviews": [
+    {
+      "photo": "/images/about-mochi-2.jpg",
+      "name": "Camila R.",
+      "opinion": "El cielo estrellado del desierto no se olvida más. Grupo re copado y todo perfectamente organizado."
+    }
+  ]
+}

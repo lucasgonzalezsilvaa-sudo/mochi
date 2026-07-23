@@ -62,6 +62,7 @@ export async function POST(req: Request) {
       cover: String(body.cover ?? "/images/hero-atacama.jpg"),
       tags,
       author: String(body.author ?? "Mochi"),
+      tourSlug: String(body.tourSlug ?? "").trim() || undefined,
       content,
     });
   } catch (e) {
