@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { site } from "@/lib/site";
+import { site, whatsappLink } from "@/lib/site";
 
 const links = [
   { href: "/viajes", label: "Viajes" },
@@ -65,7 +65,7 @@ export default function Header() {
             </Link>
           ))}
           <a
-            href={site.whatsapp}
+            href={whatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
             className="btn bg-terra px-4 py-2 text-sm text-white shadow-sm hover:bg-terra-deep"
@@ -120,7 +120,7 @@ export default function Header() {
             </Link>
           ))}
           <a
-            href={site.whatsapp}
+            href={whatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
             className="btn mt-2 bg-terra px-4 py-3 text-base text-white"

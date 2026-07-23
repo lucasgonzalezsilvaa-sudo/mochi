@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { site, whatsappLink, mailtoLink } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -37,7 +37,7 @@ export default function Footer() {
           <p className="kicker text-muted">Escribime</p>
           <ul className="mt-4 space-y-2 text-sm text-ink-soft">
             <li>
-              <a href={site.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-terra">
+              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="hover:text-terra">
                 WhatsApp
               </a>
             </li>
@@ -47,7 +47,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href={`mailto:${site.email}`} className="hover:text-terra">
+              <a href={mailtoLink()} className="hover:text-terra">
                 {site.email}
               </a>
             </li>

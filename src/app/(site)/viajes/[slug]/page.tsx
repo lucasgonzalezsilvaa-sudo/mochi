@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { site } from "@/lib/site";
+import { site, whatsappLink } from "@/lib/site";
 import { getAllTours, getTour } from "@/lib/viajes";
 import TourCard from "@/components/TourCard";
 import OfferCountdown from "@/components/OfferCountdown";
@@ -44,11 +44,6 @@ export default async function ViajePage({
   if (!tour) notFound();
 
   const otros = getAllTours().filter((t) => t.slug !== tour.slug);
-
-  const waText = encodeURIComponent(
-    `¡Hola Mochi! Me interesa el viaje "${tour.name}" (${tour.dates}). ¿Me contás más?`,
-  );
-  const waLink = `${site.whatsapp}?text=${waText}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -162,7 +157,7 @@ export default async function ViajePage({
                 ))}
               </ul>
               <a
-                href={waLink}
+                href={whatsappLink()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn mt-6 w-full bg-terra px-5 py-3 text-white hover:bg-terra-deep"

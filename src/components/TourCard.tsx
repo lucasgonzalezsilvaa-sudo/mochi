@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Tour } from "@/lib/viajes";
+import type { Tour } from "@/lib/viajes-shared";
 import OfferCountdown from "@/components/OfferCountdown";
 
 const accentBg = {

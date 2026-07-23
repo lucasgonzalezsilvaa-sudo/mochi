@@ -1,43 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
+import { parseReviews } from "@/lib/viajes-shared";
+import type { Review, Tour, TourReview } from "@/lib/viajes-shared";
+
+export type { Review, Tour, TourReview } from "@/lib/viajes-shared";
+export { parsePriceValue, getDiscountPercent } from "@/lib/viajes-shared";
 
 export const VIAJES_DIR = path.join(process.cwd(), "content", "viajes");
-
-export type Review = {
-  photo: string;
-  name: string;
-  opinion: string;
-};
-
-export type Tour = {
-  slug: string;
-  name: string;
-  place: string;
-  dates: string;
-  duration: string;
-  image: string;
-  blurb: string;
-  intro: string[];
-  highlights: string[];
-  includes: string[];
-  accent: "terra" | "ocean" | "sun";
-  price: string;
-  priceBefore?: string;
-  offerEndsAt?: string;
-  offerLabel?: string;
-  reviews: Review[];
-};
-
-function parseReviews(value: unknown): Review[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .map((r) => ({
-      photo: String(r?.photo ?? ""),
-      name: String(r?.name ?? "").trim(),
-      opinion: String(r?.opinion ?? "").trim(),
-    }))
-    .filter((r) => r.name && r.opinion);
-}
 
 function ensureDir() {
   if (!fs.existsSync(VIAJES_DIR)) {
@@ -84,8 +53,6 @@ export function getAllTours(): Tour[] {
     .filter((t): t is Tour => t !== null)
     .sort((a, b) => a.name.localeCompare(b.name));
 }
-
-export type TourReview = Review & { tourSlug: string; tourName: string };
 
 /** Todas las reseñas de todos los viajes, para mostrar en una sección agregada. */
 export function getAllReviews(): TourReview[] {

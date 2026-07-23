@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
-import TourCard from "@/components/TourCard";
+import ToursGrid from "@/components/ToursGrid";
 import { getAllTours } from "@/lib/viajes";
 
 export const metadata: Metadata = {
@@ -29,13 +29,7 @@ export default function ViajesPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-        <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {tours.map((tour, i) => (
-            <Reveal key={tour.slug} delay={(i % 3) * 80} as="article">
-              <TourCard tour={tour} />
-            </Reveal>
-          ))}
-        </div>
+        <ToursGrid tours={tours} />
       </section>
     </div>
   );

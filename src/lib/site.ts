@@ -12,6 +12,17 @@ export const site = {
   instagramHandle: "@losviajesdemochi",
 };
 
+/** Mensaje precargado al escribir por WhatsApp o mail desde cualquier botón del sitio. */
+export const CONTACT_MESSAGE = "Hola, vengo desde la web! Me interesa más info!";
+
+export function whatsappLink(message: string = CONTACT_MESSAGE): string {
+  return `${site.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+export function mailtoLink(message: string = CONTACT_MESSAGE): string {
+  return `mailto:${site.email}?body=${encodeURIComponent(message)}`;
+}
+
 export type Coordinator = {
   name: string;
   photo: string;

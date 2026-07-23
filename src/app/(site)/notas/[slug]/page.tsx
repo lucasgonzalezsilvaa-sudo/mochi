@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getAllNotas, getNota, getSlugs } from "@/lib/notas";
-import { site } from "@/lib/site";
+import { site, whatsappLink } from "@/lib/site";
 import { getTour } from "@/lib/viajes";
 import NoteCard from "@/components/NoteCard";
 
@@ -153,7 +153,7 @@ export default async function NotaPage({
                 Contame a dónde y armamos tu próximo viaje.
               </p>
               <a
-                href={site.whatsapp}
+                href={whatsappLink()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn mt-5 bg-terra px-6 py-3 text-white hover:bg-terra-deep"

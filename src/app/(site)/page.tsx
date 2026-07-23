@@ -5,7 +5,7 @@ import NoteCard from "@/components/NoteCard";
 import TourCard from "@/components/TourCard";
 import CoordinatorCard from "@/components/CoordinatorCard";
 import ReviewCard from "@/components/ReviewCard";
-import { site, coordinators } from "@/lib/site";
+import { site, coordinators, whatsappLink, mailtoLink } from "@/lib/site";
 import { getAllTours, getAllReviews } from "@/lib/viajes";
 import { getAllNotas } from "@/lib/notas";
 
@@ -255,7 +255,7 @@ export default function Home() {
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <a
-                  href={site.whatsapp}
+                  href={whatsappLink()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn bg-terra px-7 py-3.5 text-base text-white shadow-lg hover:bg-terra-deep"
@@ -263,7 +263,7 @@ export default function Home() {
                   Escribir por WhatsApp
                 </a>
                 <a
-                  href={`mailto:${site.email}`}
+                  href={mailtoLink()}
                   className="btn border border-sand/40 px-7 py-3.5 text-base text-cream hover:bg-white/10"
                 >
                   {site.email}
