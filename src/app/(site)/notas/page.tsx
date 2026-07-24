@@ -9,8 +9,10 @@ export const metadata: Metadata = {
     "Consejos, rutas y experiencias para viajar distinto por Sudamérica. El diario de viaje de Mochi.",
 };
 
-export default function NotasPage() {
-  const notas = getAllNotas();
+export const dynamic = "force-dynamic";
+
+export default async function NotasPage() {
+  const notas = await getAllNotas();
 
   return (
     <div className="pt-16">

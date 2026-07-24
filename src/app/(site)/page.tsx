@@ -9,10 +9,15 @@ import { site, coordinators, whatsappLink, mailtoLink } from "@/lib/site";
 import { getAllTours, getAllReviews } from "@/lib/viajes";
 import { getAllNotas } from "@/lib/notas";
 
-export default function Home() {
-  const notas = getAllNotas().slice(0, 3);
-  const tours = getAllTours();
-  const reviews = getAllReviews();
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const [allNotas, tours, reviews] = await Promise.all([
+    getAllNotas(),
+    getAllTours(),
+    getAllReviews(),
+  ]);
+  const notas = allNotas.slice(0, 3);
 
   return (
     <>

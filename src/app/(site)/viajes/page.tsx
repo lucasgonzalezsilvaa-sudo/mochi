@@ -9,8 +9,10 @@ export const metadata: Metadata = {
     "Viajes en grupos reducidos por Sudamérica con Mochi. Atacama, Colombia y Patagonia: cupos limitados y todo resuelto.",
 };
 
-export default function ViajesPage() {
-  const tours = getAllTours();
+export const dynamic = "force-dynamic";
+
+export default async function ViajesPage() {
+  const tours = await getAllTours();
   return (
     <div className="pt-16">
       <section className="border-b border-line bg-sand-2/50">

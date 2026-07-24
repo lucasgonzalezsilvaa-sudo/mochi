@@ -1,19 +1,17 @@
 import { NextResponse } from "next/server";
-import fs from "node:fs";
-import path from "node:path";
+import { supabaseAdmin, MEDIA_BUCKET } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // La autenticación (sesión con cookie) la resuelve src/proxy.ts.
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "uploads");
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_EXT: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-  "image/gif": ".gif",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
 };
 
 export async function POST(req: Request) {
@@ -42,16 +40,21 @@ export async function POST(req: Request) {
   }
 
   try {
-    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
-    fs.writeFileSync(path.join(UPLOAD_DIR, filename), buffer);
-    return NextResponse.json({ path: `/images/uploads/${filename}` });
+
+    const supabase = supabaseAdmin();
+    const { error } = await supabase.storage
+      .from(MEDIA_BUCKET)
+      .upload(filename, buffer, { contentType: file.type, upsert: false });
+    if (error) throw error;
+
+    const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(filename);
+    return NextResponse.json({ path: data.publicUrl });
   } catch (e) {
     return NextResponse.json(
       {
-        error:
-          "No se pudo guardar la imagen. En un servidor sin escritura (como Vercel) esto funciona solo en tu computadora local.",
+        error: "No se pudo subir la imagen a Supabase Storage.",
         detail: e instanceof Error ? e.message : String(e),
       },
       { status: 500 },

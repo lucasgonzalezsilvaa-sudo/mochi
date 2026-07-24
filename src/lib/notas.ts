@@ -1,8 +1,4 @@
-﻿import fs from "node:fs";
-import path from "node:path";
-import matter from "gray-matter";
-
-export const NOTAS_DIR = path.join(process.cwd(), "content", "notas");
+import { supabaseAdmin } from "@/lib/supabase";
 
 export type Nota = {
   slug: string;
@@ -16,46 +12,58 @@ export type Nota = {
   content: string; // cuerpo Markdown
 };
 
-function ensureDir() {
-  if (!fs.existsSync(NOTAS_DIR)) {
-    fs.mkdirSync(NOTAS_DIR, { recursive: true });
-  }
-}
+type NotaRow = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  date: string | null;
+  cover: string | null;
+  tags: string[] | null;
+  author: string | null;
+  tour_slug: string | null;
+  content: string | null;
+};
 
-export function getSlugs(): string[] {
-  ensureDir();
-  return fs
-    .readdirSync(NOTAS_DIR)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => f.replace(/\.md$/, ""));
-}
-
-export function getNota(slug: string): Nota | null {
-  const file = path.join(NOTAS_DIR, `${slug}.md`);
-  if (!fs.existsSync(file)) return null;
-  const raw = fs.readFileSync(file, "utf-8");
-  const { data, content } = matter(raw);
+function rowToNota(row: NotaRow): Nota {
   return {
-    slug,
-    title: data.title ?? slug,
-    excerpt: data.excerpt ?? "",
-    date: data.date ?? "",
-    cover: data.cover ?? "/images/hero-atacama.jpg",
-    tags: Array.isArray(data.tags) ? data.tags : [],
-    author: data.author ?? "Mochi",
-    tourSlug: data.tourSlug || undefined,
-    content,
+    slug: row.slug,
+    title: row.title ?? row.slug,
+    excerpt: row.excerpt ?? "",
+    date: row.date ?? "",
+    cover: row.cover ?? "/images/hero-atacama.jpg",
+    tags: Array.isArray(row.tags) ? row.tags : [],
+    author: row.author ?? "Mochi",
+    tourSlug: row.tour_slug || undefined,
+    content: row.content ?? "",
   };
 }
 
-export function getAllNotas(): Nota[] {
-  return getSlugs()
-    .map((slug) => getNota(slug))
-    .filter((n): n is Nota => n !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+export async function getSlugs(): Promise<string[]> {
+  const { data, error } = await supabaseAdmin().from("notas").select("slug");
+  if (error) throw error;
+  return (data ?? []).map((r) => r.slug as string);
 }
 
-/** Convierte un tÃ­tulo en un slug seguro para nombre de archivo/URL. */
+export async function getNota(slug: string): Promise<Nota | null> {
+  const { data, error } = await supabaseAdmin()
+    .from("notas")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? rowToNota(data as NotaRow) : null;
+}
+
+export async function getAllNotas(): Promise<Nota[]> {
+  const { data, error } = await supabaseAdmin()
+    .from("notas")
+    .select("*")
+    .order("date", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => rowToNota(r as NotaRow));
+}
+
+/** Convierte un título en un slug seguro para URL. */
 export function slugify(input: string): string {
   return input
     .toString()
@@ -68,8 +76,7 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Serializa una nota a Markdown con frontmatter y la guarda en disco. */
-export function saveNota(input: {
+export async function saveNota(input: {
   slug: string;
   title: string;
   excerpt: string;
@@ -79,23 +86,32 @@ export function saveNota(input: {
   author: string;
   tourSlug?: string;
   content: string;
-}): void {
-  ensureDir();
-  const fileData = matter.stringify(input.content ?? "", {
-    title: input.title,
-    excerpt: input.excerpt,
-    date: input.date,
-    cover: input.cover,
-    tags: input.tags,
-    author: input.author,
-    ...(input.tourSlug ? { tourSlug: input.tourSlug } : {}),
-  });
-  fs.writeFileSync(path.join(NOTAS_DIR, `${input.slug}.md`), fileData, "utf-8");
+}): Promise<void> {
+  const { error } = await supabaseAdmin()
+    .from("notas")
+    .upsert(
+      {
+        slug: input.slug,
+        title: input.title,
+        excerpt: input.excerpt,
+        date: input.date,
+        cover: input.cover,
+        tags: input.tags,
+        author: input.author,
+        tour_slug: input.tourSlug ?? null,
+        content: input.content,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "slug" },
+    );
+  if (error) throw error;
 }
 
-export function deleteNota(slug: string): boolean {
-  const file = path.join(NOTAS_DIR, `${slug}.md`);
-  if (!fs.existsSync(file)) return false;
-  fs.unlinkSync(file);
-  return true;
+export async function deleteNota(slug: string): Promise<boolean> {
+  const { error, count } = await supabaseAdmin()
+    .from("notas")
+    .delete({ count: "exact" })
+    .eq("slug", slug);
+  if (error) throw error;
+  return (count ?? 0) > 0;
 }

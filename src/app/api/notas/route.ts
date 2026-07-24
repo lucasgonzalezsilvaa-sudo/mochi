@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { getAllNotas, saveNota, slugify, getNota } from "@/lib/notas";
+import { revalidatePath } from "next/cache";
+import { getAllNotas, saveNota, slugify, getNota, deleteNota } from "@/lib/notas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// La autenticación (sesión con cookie) la resuelve src/middleware.ts.
+// La autenticación (sesión con cookie) la resuelve src/proxy.ts.
 
 export async function GET() {
-  const notas = getAllNotas().map((n) => ({
+  const notas = (await getAllNotas()).map((n) => ({
     slug: n.slug,
     title: n.title,
     date: n.date,
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
   }
 
   // Evita pisar otra nota existente al crear una nueva.
-  if (slug !== originalSlug && getNota(slug)) {
+  if (slug !== originalSlug && (await getNota(slug))) {
     return NextResponse.json(
       { error: `Ya existe una nota con el enlace "${slug}". Cambiá el título.` },
       { status: 409 },
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
         .filter(Boolean);
 
   try {
-    saveNota({
+    await saveNota({
       slug,
       title,
       excerpt: String(body.excerpt ?? "").trim(),
@@ -65,16 +66,24 @@ export async function POST(req: Request) {
       tourSlug: String(body.tourSlug ?? "").trim() || undefined,
       content,
     });
+
+    // Si se editó el enlace, borra la nota vieja.
+    if (originalSlug && originalSlug !== slug) {
+      await deleteNota(originalSlug);
+    }
   } catch (e) {
     return NextResponse.json(
       {
-        error:
-          "No se pudo guardar. En un servidor sin escritura (como Vercel) el admin funciona solo en tu computadora local.",
+        error: "No se pudo guardar la nota en Supabase.",
         detail: e instanceof Error ? e.message : String(e),
       },
       { status: 500 },
     );
   }
+
+  revalidatePath("/");
+  revalidatePath("/notas");
+  revalidatePath(`/notas/${slug}`);
 
   return NextResponse.json({ ok: true, slug });
 }

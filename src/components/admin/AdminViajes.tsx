@@ -533,9 +533,8 @@ export default function AdminViajes() {
         <div className="mt-6 rounded-xl border border-line bg-sand-2/50 p-4 text-xs leading-relaxed text-ink-soft">
           <p className="font-semibold text-ink">Cómo funciona</p>
           <p className="mt-1.5">
-            Cada viaje se guarda como un archivo en tu proyecto. Escribís acá desde tu
-            computadora y, para que aparezca online, subís los cambios a Git (Vercel
-            republica solo).
+            Cada viaje se guarda en la base de datos (Supabase) y aparece online al
+            instante, sin necesidad de volver a publicar.
           </p>
         </div>
       </aside>

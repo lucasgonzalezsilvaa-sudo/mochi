@@ -3,15 +3,19 @@ import { getAllNotas } from "@/lib/notas";
 import { getAllTours } from "@/lib/viajes";
 import { site } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const notas = getAllNotas().map((n) => ({
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [allNotas, allTours] = await Promise.all([getAllNotas(), getAllTours()]);
+
+  const notas = allNotas.map((n) => ({
     url: `${site.url}/notas/${n.slug}`,
     lastModified: n.date ? new Date(n.date) : new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  const viajes = getAllTours().map((t) => ({
+  const viajes = allTours.map((t) => ({
     url: `${site.url}/viajes/${t.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,

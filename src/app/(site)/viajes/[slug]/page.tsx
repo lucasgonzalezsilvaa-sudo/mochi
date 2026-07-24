@@ -8,11 +8,7 @@ import TourCard from "@/components/TourCard";
 import OfferCountdown from "@/components/OfferCountdown";
 import ReviewCard from "@/components/ReviewCard";
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return getAllTours().map((t) => ({ slug: t.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -20,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tour = getTour(slug);
+  const tour = await getTour(slug);
   if (!tour) return {};
   return {
     title: `${tour.name} — ${tour.dates}`,
@@ -40,10 +36,10 @@ export default async function ViajePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tour = getTour(slug);
+  const tour = await getTour(slug);
   if (!tour) notFound();
 
-  const otros = getAllTours().filter((t) => t.slug !== tour.slug);
+  const otros = (await getAllTours()).filter((t) => t.slug !== tour.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",

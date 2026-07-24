@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAllTours, saveTour, slugify, getTour, deleteTour } from "@/lib/viajes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// La autenticación (sesión con cookie) la resuelve src/middleware.ts.
+// La autenticación (sesión con cookie) la resuelve src/proxy.ts.
 
 export async function GET() {
-  const tours = getAllTours();
+  const tours = await getAllTours();
   return NextResponse.json({ tours });
 }
 
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
   }
 
   // Evita pisar otro viaje existente al crear uno nuevo.
-  if (slug !== originalSlug && getTour(slug)) {
+  if (slug !== originalSlug && (await getTour(slug))) {
     return NextResponse.json(
       { error: `Ya existe un viaje con el enlace "${slug}". Cambiá el nombre.` },
       { status: 409 },
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
     : "terra";
 
   try {
-    saveTour({
+    await saveTour({
       slug,
       name,
       place: String(body.place ?? "").trim(),
@@ -81,20 +82,23 @@ export async function POST(req: Request) {
         : [],
     });
 
-    // Si se editó el slug, borra el archivo viejo.
+    // Si se editó el enlace, borra el viaje viejo.
     if (originalSlug && originalSlug !== slug) {
-      deleteTour(originalSlug);
+      await deleteTour(originalSlug);
     }
   } catch (e) {
     return NextResponse.json(
       {
-        error:
-          "No se pudo guardar. En un servidor sin escritura (como Vercel) el admin funciona solo en tu computadora local.",
+        error: "No se pudo guardar el viaje en Supabase.",
         detail: e instanceof Error ? e.message : String(e),
       },
       { status: 500 },
     );
   }
+
+  revalidatePath("/");
+  revalidatePath("/viajes");
+  revalidatePath(`/viajes/${slug}`);
 
   return NextResponse.json({ ok: true, slug });
 }

@@ -4,16 +4,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getAllNotas, getNota, getSlugs } from "@/lib/notas";
+import { getAllNotas, getNota } from "@/lib/notas";
 import { site, whatsappLink } from "@/lib/site";
 import { getTour } from "@/lib/viajes";
 import NoteCard from "@/components/NoteCard";
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return getSlugs().map((slug) => ({ slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -21,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const nota = getNota(slug);
+  const nota = await getNota(slug);
   if (!nota) return {};
   return {
     title: nota.title,
@@ -53,14 +49,14 @@ export default async function NotaPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const nota = getNota(slug);
+  const nota = await getNota(slug);
   if (!nota) notFound();
 
-  const otras = getAllNotas()
+  const otras = (await getAllNotas())
     .filter((n) => n.slug !== nota.slug)
     .slice(0, 3);
 
-  const relatedTour = nota.tourSlug ? getTour(nota.tourSlug) : null;
+  const relatedTour = nota.tourSlug ? await getTour(nota.tourSlug) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",

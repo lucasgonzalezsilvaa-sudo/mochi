@@ -1,72 +1,91 @@
-import fs from "node:fs";
-import path from "node:path";
+import { supabaseAdmin } from "@/lib/supabase";
 import { parseReviews } from "@/lib/viajes-shared";
 import type { Review, Tour, TourReview } from "@/lib/viajes-shared";
 
 export type { Review, Tour, TourReview } from "@/lib/viajes-shared";
 export { parsePriceValue, getDiscountPercent } from "@/lib/viajes-shared";
 
-export const VIAJES_DIR = path.join(process.cwd(), "content", "viajes");
+type TourRow = {
+  slug: string;
+  name: string;
+  place: string | null;
+  dates: string | null;
+  duration: string | null;
+  image: string | null;
+  blurb: string | null;
+  intro: string[] | null;
+  highlights: string[] | null;
+  includes: string[] | null;
+  accent: string | null;
+  price: string | null;
+  price_before: string | null;
+  offer_ends_at: string | null;
+  offer_label: string | null;
+  reviews: unknown;
+};
 
-function ensureDir() {
-  if (!fs.existsSync(VIAJES_DIR)) {
-    fs.mkdirSync(VIAJES_DIR, { recursive: true });
-  }
-}
-
-export function getSlugs(): string[] {
-  ensureDir();
-  return fs
-    .readdirSync(VIAJES_DIR)
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => f.replace(/\.json$/, ""));
-}
-
-export function getTour(slug: string): Tour | null {
-  const file = path.join(VIAJES_DIR, `${slug}.json`);
-  if (!fs.existsSync(file)) return null;
-  const raw = fs.readFileSync(file, "utf-8");
-  const data = JSON.parse(raw);
+function rowToTour(row: TourRow): Tour {
   return {
-    slug,
-    name: data.name ?? slug,
-    place: data.place ?? "",
-    dates: data.dates ?? "",
-    duration: data.duration ?? "",
-    image: data.image ?? "/images/hero-atacama.jpg",
-    blurb: data.blurb ?? "",
-    intro: Array.isArray(data.intro) ? data.intro : [],
-    highlights: Array.isArray(data.highlights) ? data.highlights : [],
-    includes: Array.isArray(data.includes) ? data.includes : [],
-    accent: ["terra", "ocean", "sun"].includes(data.accent) ? data.accent : "terra",
-    price: data.price ?? "",
-    priceBefore: data.priceBefore || undefined,
-    offerEndsAt: data.offerEndsAt || undefined,
-    offerLabel: data.offerLabel || undefined,
-    reviews: parseReviews(data.reviews),
+    slug: row.slug,
+    name: row.name ?? row.slug,
+    place: row.place ?? "",
+    dates: row.dates ?? "",
+    duration: row.duration ?? "",
+    image: row.image ?? "/images/hero-atacama.jpg",
+    blurb: row.blurb ?? "",
+    intro: Array.isArray(row.intro) ? row.intro : [],
+    highlights: Array.isArray(row.highlights) ? row.highlights : [],
+    includes: Array.isArray(row.includes) ? row.includes : [],
+    accent: ["terra", "ocean", "sun"].includes(row.accent ?? "")
+      ? (row.accent as "terra" | "ocean" | "sun")
+      : "terra",
+    price: row.price ?? "",
+    priceBefore: row.price_before || undefined,
+    offerEndsAt: row.offer_ends_at || undefined,
+    offerLabel: row.offer_label || undefined,
+    reviews: parseReviews(row.reviews),
   };
 }
 
-export function getAllTours(): Tour[] {
-  return getSlugs()
-    .map((slug) => getTour(slug))
-    .filter((t): t is Tour => t !== null)
-    .sort((a, b) => a.name.localeCompare(b.name));
+export async function getSlugs(): Promise<string[]> {
+  const { data, error } = await supabaseAdmin().from("viajes").select("slug");
+  if (error) throw error;
+  return (data ?? []).map((r) => r.slug as string);
 }
 
-/** Todas las reseñas de todos los viajes, para mostrar en una sección agregada. */
-export function getAllReviews(): TourReview[] {
-  return getAllTours().flatMap((t) =>
+export async function getTour(slug: string): Promise<Tour | null> {
+  const { data, error } = await supabaseAdmin()
+    .from("viajes")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? rowToTour(data as TourRow) : null;
+}
+
+export async function getAllTours(): Promise<Tour[]> {
+  const { data, error } = await supabaseAdmin()
+    .from("viajes")
+    .select("*")
+    .order("name", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((r) => rowToTour(r as TourRow));
+}
+
+/** Todas las reseñas de todos los viajes, para la sección agregada. */
+export async function getAllReviews(): Promise<TourReview[]> {
+  const tours = await getAllTours();
+  return tours.flatMap((t) =>
     t.reviews.map((r) => ({ ...r, tourSlug: t.slug, tourName: t.name })),
   );
 }
 
-/** Convierte un título en un slug seguro para nombre de archivo/URL. */
+/** Convierte un nombre en un slug seguro para URL. */
 export function slugify(input: string): string {
   return input
     .toString()
     .normalize("NFD")
-    .replace(new RegExp("[\\u0300-\\u036f]", "g"), "") // quita acentos combinados
+    .replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9\s-]/g, "")
@@ -74,8 +93,7 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Serializa un viaje a JSON y lo guarda en disco. */
-export function saveTour(input: {
+export async function saveTour(input: {
   slug: string;
   name: string;
   place: string;
@@ -92,36 +110,39 @@ export function saveTour(input: {
   offerEndsAt?: string;
   offerLabel?: string;
   reviews?: Review[];
-}): void {
-  ensureDir();
-  const data: Tour = {
-    slug: input.slug,
-    name: input.name,
-    place: input.place,
-    dates: input.dates,
-    duration: input.duration,
-    image: input.image,
-    blurb: input.blurb,
-    intro: input.intro,
-    highlights: input.highlights,
-    includes: input.includes,
-    accent: input.accent,
-    price: input.price,
-    priceBefore: input.priceBefore || undefined,
-    offerEndsAt: input.offerEndsAt || undefined,
-    offerLabel: input.offerLabel || undefined,
-    reviews: parseReviews(input.reviews),
-  };
-  fs.writeFileSync(
-    path.join(VIAJES_DIR, `${input.slug}.json`),
-    JSON.stringify(data, null, 2) + "\n",
-    "utf-8",
-  );
+}): Promise<void> {
+  const { error } = await supabaseAdmin()
+    .from("viajes")
+    .upsert(
+      {
+        slug: input.slug,
+        name: input.name,
+        place: input.place,
+        dates: input.dates,
+        duration: input.duration,
+        image: input.image,
+        blurb: input.blurb,
+        intro: input.intro,
+        highlights: input.highlights,
+        includes: input.includes,
+        accent: input.accent,
+        price: input.price,
+        price_before: input.priceBefore ?? null,
+        offer_ends_at: input.offerEndsAt ?? null,
+        offer_label: input.offerLabel ?? null,
+        reviews: parseReviews(input.reviews),
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "slug" },
+    );
+  if (error) throw error;
 }
 
-export function deleteTour(slug: string): boolean {
-  const file = path.join(VIAJES_DIR, `${slug}.json`);
-  if (!fs.existsSync(file)) return false;
-  fs.unlinkSync(file);
-  return true;
+export async function deleteTour(slug: string): Promise<boolean> {
+  const { error, count } = await supabaseAdmin()
+    .from("viajes")
+    .delete({ count: "exact" })
+    .eq("slug", slug);
+  if (error) throw error;
+  return (count ?? 0) > 0;
 }
