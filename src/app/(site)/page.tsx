@@ -35,7 +35,7 @@ export default async function Home() {
 
         <div className="relative mx-auto w-full max-w-6xl px-5 pb-20 pt-32 sm:px-8">
           <Reveal>
-            <p className="kicker text-sand/80">Viajes en grupos reducidos · Sudamérica</p>
+            <p className="kicker text-sand/80">Viajes de autor por Latinoamérica y el mundo</p>
           </Reveal>
           <Reveal delay={90}>
             <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-[1.05] text-cream sm:text-6xl md:text-7xl">
@@ -45,8 +45,9 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={180}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-sand/90">
-              Soy Mochi. Armo viajes en grupos chicos para recorrer Sudamérica sin
-              apuro, con vínculos reales y tiempo para lo que de verdad importa.
+              Soy Mochi. Diseño experiencias íntimas para recorrer Sudamérica a un
+              ritmo humano, con grupos súper reducidos, vínculos reales y tiempo para
+              lo que de verdad importa.
             </p>
           </Reveal>
           <Reveal delay={260}>
@@ -73,9 +74,9 @@ export default async function Home() {
         <div className="mx-auto max-w-4xl px-5 py-20 text-center sm:px-8">
           <Reveal>
             <p className="font-serif text-2xl leading-relaxed text-ink sm:text-3xl">
-              No vendo destinos. Comparto una forma de viajar: despacio, presente y
-              en buena compañía. Grupos chicos, experiencias reales y el espacio para
-              que cada viaje te cambie a su manera.
+              Comparto una forma de viajar: despacio, presente y en buena compañía.
+              Grupos reducidos, experiencias reales y el espacio para que cada viaje
+              te cambie a su manera.
             </p>
           </Reveal>
         </div>
