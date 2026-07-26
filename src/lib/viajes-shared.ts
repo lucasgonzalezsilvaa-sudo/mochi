@@ -13,7 +13,8 @@ export type Tour = {
   place: string;
   dates: string;
   duration: string;
-  image: string;
+  image: string; // portada (= images[0]); se mantiene por compatibilidad
+  images: string[]; // galería ordenada para el carrusel
   blurb: string;
   intro: string[];
   highlights: string[];

@@ -12,6 +12,7 @@ type TourRow = {
   dates: string | null;
   duration: string | null;
   image: string | null;
+  images: string[] | null;
   blurb: string | null;
   intro: string[] | null;
   highlights: string[] | null;
@@ -25,13 +26,22 @@ type TourRow = {
 };
 
 function rowToTour(row: TourRow): Tour {
+  // La galería es la fuente de verdad; si está vacía, cae a la imagen principal.
+  const gallery =
+    Array.isArray(row.images) && row.images.length > 0
+      ? row.images.filter(Boolean)
+      : row.image
+        ? [row.image]
+        : [];
+  const cover = gallery[0] ?? row.image ?? "/images/hero-atacama.jpg";
   return {
     slug: row.slug,
     name: row.name ?? row.slug,
     place: row.place ?? "",
     dates: row.dates ?? "",
     duration: row.duration ?? "",
-    image: row.image ?? "/images/hero-atacama.jpg",
+    image: cover,
+    images: gallery.length > 0 ? gallery : [cover],
     blurb: row.blurb ?? "",
     intro: Array.isArray(row.intro) ? row.intro : [],
     highlights: Array.isArray(row.highlights) ? row.highlights : [],
@@ -99,7 +109,8 @@ export async function saveTour(input: {
   place: string;
   dates: string;
   duration: string;
-  image: string;
+  image?: string;
+  images?: string[];
   blurb: string;
   intro: string[];
   highlights: string[];
@@ -111,6 +122,8 @@ export async function saveTour(input: {
   offerLabel?: string;
   reviews?: Review[];
 }): Promise<void> {
+  const gallery = (input.images ?? (input.image ? [input.image] : [])).filter(Boolean);
+  const cover = gallery[0] ?? input.image ?? "";
   const { error } = await supabaseAdmin()
     .from("viajes")
     .upsert(
@@ -120,7 +133,8 @@ export async function saveTour(input: {
         place: input.place,
         dates: input.dates,
         duration: input.duration,
-        image: input.image,
+        image: cover,
+        images: gallery,
         blurb: input.blurb,
         intro: input.intro,
         highlights: input.highlights,

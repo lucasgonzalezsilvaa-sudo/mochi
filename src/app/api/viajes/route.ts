@@ -63,7 +63,11 @@ export async function POST(req: Request) {
       place: String(body.place ?? "").trim(),
       dates: String(body.dates ?? "").trim(),
       duration: String(body.duration ?? "").trim(),
-      image: String(body.image ?? "/images/hero-atacama.jpg"),
+      images: Array.isArray(body.images)
+        ? body.images.map((i) => String(i).trim()).filter(Boolean)
+        : body.image
+          ? [String(body.image).trim()]
+          : [],
       blurb: String(body.blurb ?? "").trim(),
       intro: toLines(body.intro),
       highlights: toLines(body.highlights),

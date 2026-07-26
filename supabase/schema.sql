@@ -26,6 +26,7 @@ create table if not exists public.viajes (
   dates        text not null default '',
   duration     text not null default '',
   image        text not null default '',
+  images       text[] not null default '{}',
   blurb        text not null default '',
   intro        text[] not null default '{}',
   highlights   text[] not null default '{}',
@@ -39,6 +40,13 @@ create table if not exists public.viajes (
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now()
 );
+
+-- ---------- Migración: galería de imágenes por viaje ----------
+-- Agrega la columna a bases ya creadas y rellena con la imagen principal existente.
+alter table public.viajes add column if not exists images text[] not null default '{}';
+update public.viajes
+  set images = array[image]
+  where array_length(images, 1) is null and coalesce(image, '') <> '';
 
 -- ---------- Row Level Security ----------
 -- Lectura pública (el sitio la usa para mostrar contenido).

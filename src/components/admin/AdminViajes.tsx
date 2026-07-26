@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import ImagePicker from "@/components/admin/ImagePicker";
+import ImageGallery from "@/components/admin/ImageGallery";
 
 type TourMeta = {
   slug: string;
@@ -21,6 +22,7 @@ type Tour = {
   dates: string;
   duration: string;
   image: string;
+  images: string[];
   blurb: string;
   intro: string[];
   highlights: string[];
@@ -57,7 +59,7 @@ const EMPTY = {
   place: "",
   dates: "",
   duration: "",
-  image: COVER_OPTIONS[0],
+  images: [COVER_OPTIONS[0]] as string[],
   blurb: "",
   intro: "",
   highlights: "",
@@ -126,7 +128,7 @@ export default function AdminViajes() {
       place: tour.place,
       dates: tour.dates,
       duration: tour.duration,
-      image: tour.image,
+      images: tour.images?.length ? tour.images : tour.image ? [tour.image] : [],
       blurb: tour.blurb,
       intro: tour.intro.join("\n"),
       highlights: tour.highlights.join("\n"),
@@ -459,11 +461,14 @@ export default function AdminViajes() {
 
           <div>
             <label className={label}>
-              Imagen principal <span className="text-muted">— elegí una o subí la tuya</span>
+              Imágenes del viaje{" "}
+              <span className="text-muted">
+                — la primera es la portada; arrastrá el orden con ← →
+              </span>
             </label>
-            <ImagePicker
-              value={form.image}
-              onChange={(path) => setForm((f) => ({ ...f, image: path }))}
+            <ImageGallery
+              value={form.images}
+              onChange={(images) => setForm((f) => ({ ...f, images }))}
               presets={COVER_OPTIONS}
             />
           </div>

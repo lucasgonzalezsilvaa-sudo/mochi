@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { site, whatsappLink } from "@/lib/site";
 import { getAllTours, getTour } from "@/lib/viajes";
 import TourCard from "@/components/TourCard";
+import TourGallery from "@/components/TourGallery";
 import OfferCountdown from "@/components/OfferCountdown";
 import ReviewCard from "@/components/ReviewCard";
 
@@ -46,7 +47,9 @@ export default async function ViajePage({
     "@type": "TouristTrip",
     name: tour.name,
     description: tour.blurb,
-    image: `${site.url}${tour.image}`,
+    image: tour.images.map((src) =>
+      src.startsWith("http") ? src : `${site.url}${src}`,
+    ),
     touristType: "Grupos reducidos",
     itinerary: {
       "@type": "ItemList",
@@ -97,6 +100,14 @@ export default async function ViajePage({
           </div>
         </div>
       </section>
+
+      {/* Galería de fotos */}
+      {tour.images.length > 1 && (
+        <section className="mx-auto max-w-4xl px-5 pt-16 sm:px-8">
+          <h2 className="mb-6 font-serif text-2xl text-ink">Galería</h2>
+          <TourGallery images={tour.images} name={tour.name} />
+        </section>
+      )}
 
       {/* Contenido */}
       <div className="mx-auto max-w-4xl px-5 py-16 sm:px-8">
