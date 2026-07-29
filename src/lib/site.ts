@@ -7,6 +7,8 @@ export const site = {
   url: "https://mochiviaja.com",
   email: "maxi@losviajedemochi.com",
   phone: "+598 92 825 235",
+  // Número en formato internacional, solo dígitos (para links wa.me con texto precargado).
+  whatsappNumber: "59892825235",
   whatsapp: "https://wa.me/message/XZYP2CDES5NWP1",
   instagram: "https://instagram.com/losviajesdemochi",
   instagramHandle: "@losviajesdemochi",
@@ -16,7 +18,8 @@ export const site = {
 export const CONTACT_MESSAGE = "Hola, vengo desde la web! Me interesa más info!";
 
 export function whatsappLink(message: string = CONTACT_MESSAGE): string {
-  return `${site.whatsapp}?text=${encodeURIComponent(message)}`;
+  // wa.me/<número> sí precarga el texto; el formato wa.me/message/CODE lo ignora.
+  return `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
 
 export function mailtoLink(message: string = CONTACT_MESSAGE): string {
