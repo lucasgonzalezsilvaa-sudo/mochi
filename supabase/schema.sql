@@ -48,6 +48,19 @@ update public.viajes
   set images = array[image]
   where array_length(images, 1) is null and coalesce(image, '') <> '';
 
+-- ---------- Rate limiting del login ----------
+-- Registra intentos fallidos por IP para frenar fuerza bruta en /admin.
+create table if not exists public.login_attempts (
+  id         bigint generated always as identity primary key,
+  ip         text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists login_attempts_ip_created_idx
+  on public.login_attempts (ip, created_at);
+
+-- Sin políticas: solo el servidor (service role) la usa; anon/public no acceden.
+alter table public.login_attempts enable row level security;
+
 -- ---------- Row Level Security ----------
 -- Lectura pública (el sitio la usa para mostrar contenido).
 -- La escritura ocurre solo desde el servidor con la service_role key,
