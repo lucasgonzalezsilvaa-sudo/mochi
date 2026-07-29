@@ -164,7 +164,9 @@ export default async function ViajePage({
                 ))}
               </ul>
               <a
-                href={whatsappLink()}
+                href={whatsappLink(
+                  `Hola, vengo desde la web! Me interesa el viaje "${tour.name}".`,
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn mt-6 w-full bg-terra px-5 py-3 text-white hover:bg-terra-deep"
