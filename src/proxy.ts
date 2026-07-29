@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { AUTH_COOKIE, AUTH_TOKEN } from "@/lib/auth";
+import { AUTH_COOKIE, sessionToken } from "@/lib/auth";
 
-export function proxy(req: NextRequest) {
-  const authed = req.cookies.get(AUTH_COOKIE)?.value === AUTH_TOKEN;
+export async function proxy(req: NextRequest) {
+  const authed = req.cookies.get(AUTH_COOKIE)?.value === (await sessionToken());
   const { pathname } = req.nextUrl;
 
   // API de notas y viajes: leer es público, escribir/borrar exige sesión.

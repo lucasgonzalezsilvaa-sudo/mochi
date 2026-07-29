@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ADMIN_PASSWORD, AUTH_COOKIE, AUTH_TOKEN } from "@/lib/auth";
+import { ADMIN_PASSWORD, AUTH_COOKIE, sessionToken } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(AUTH_COOKIE, AUTH_TOKEN, {
+  res.cookies.set(AUTH_COOKIE, await sessionToken(), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

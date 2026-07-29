@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { site, whatsappLink } from "@/lib/site";
+import { jsonLdSafe } from "@/lib/jsonld";
 import { getAllTours, getTour } from "@/lib/viajes";
 import TourCard from "@/components/TourCard";
 import TourGallery from "@/components/TourGallery";
@@ -65,7 +66,7 @@ export default async function ViajePage({
     <article className="pt-16">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }}
       />
 
       {/* Hero del viaje */}

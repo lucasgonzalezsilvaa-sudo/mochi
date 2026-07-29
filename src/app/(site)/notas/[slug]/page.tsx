@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getAllNotas, getNota } from "@/lib/notas";
 import { site, whatsappLink } from "@/lib/site";
+import { jsonLdSafe } from "@/lib/jsonld";
 import { getTour } from "@/lib/viajes";
 import NoteCard from "@/components/NoteCard";
 
@@ -73,7 +74,7 @@ export default async function NotaPage({
     <article className="pt-16">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }}
       />
 
       {/* Cabecera */}
